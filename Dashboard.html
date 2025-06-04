@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Miner's Helmet Safety Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #54a9f4, #d5e1ed);
+      color: #333;
+      padding: 20px 10px 80px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2rem;
+      font-weight: 600;
+    }
+
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 12px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      transition: 0.3s ease;
+    }
+
+    .card h2 {
+      font-size: 18px;
+      color: #555;
+    }
+
+    .card p {
+      font-size: 30px;
+      font-weight: bold;
+      margin-top: 10px;
+      color: #111;
+    }
+
+    .alert-box, .ok-box {
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    .alert-box {
+      background-color: #ff6b6b;
+      color: white;
+      display: none;
+    }
+
+    .ok-box {
+      background-color: #38b000;
+      color: white;
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .footer {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      text-align: right;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .footer p {
+      margin: 4px 0;
+    }
+
+    @media (max-width: 600px) {
+      .card p {
+        font-size: 24px;
+      }
+
+      .footer {
+        position: static;
+        margin-top: 30px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Miner's Helmet Safety Dashboard</h1>
+
+  <div class="dashboard">
+    <div class="card">
+      <h2>🌡️ Temperature (°C)</h2>
+      <p id="temperature">--</p>
+    </div>
+
+    <div class="card">
+      <h2>💧 Humidity (%)</h2>
+      <p id="humidity">--</p>
+    </div>
+
+    <div class="card">
+      <h2>🧪 Gas Level</h2>
+      <p id="gas">--</p>
+    </div>
+
+    <div class="card">
+      <h2>📏 Distance (cm)</h2>
+      <p id="distance">--</p>
+    </div>
+
+    <div class="alert-box" id="alertBox">⚠️ ALERT! Unsafe environment detected!</div>
+    <div class="ok-box" id="okBox">✅ All conditions are safe.</div>
+  </div>
+
+  <div class="footer">
+    <p><strong>Team Members:</strong></p>
+    <p>Dr. S. R. Thite</p>
+    <p>Ms. Vipul P. Mahajan</p>
+    <p>Ms. Gargi P. Parlikar</p>
+    <p>Ms. Sakshi N. Bagul</p>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBedyijgkRwfOw0gVgtWEBIVhU2XYDAsTs",
+      authDomain: "fx-miners-helmet.firebaseapp.com",
+      databaseURL: "https://fx-miners-helmet-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      projectId: "fx-miners-helmet",
+      storageBucket: "fx-miners-helmet.appspot.com",
+      messagingSenderId: "143048234325",
+      appId: "1:143048234325:web:c3f59483ff4624cfcf5872"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const tempEl = document.getElementById('temperature');
+    const humEl = document.getElementById('humidity');
+    const gasEl = document.getElementById('gas');
+    const distEl = document.getElementById('distance');
+    const alertBox = document.getElementById('alertBox');
+    const okBox = document.getElementById('okBox');
+
+    function updateUI(data) {
+      tempEl.textContent = data.temperature + " °C";
+      humEl.textContent = data.humidity + " %";
+      gasEl.textContent = data.gas;
+      distEl.textContent = data.distance + " cm";
+
+      if (data.alert === "YES") {
+        alertBox.style.display = "block";
+        okBox.style.display = "none";
+      } else {
+        alertBox.style.display = "none";
+        okBox.style.display = "block";
+      }
+    }
+
+    db.ref('helmet').on('value', snapshot => {
+      const data = snapshot.val();
+      if (data) {
+        updateUI(data);
+      }
+    });
+  </script>
+</body>
+</html>
