@@ -176,7 +176,7 @@
     function updateUI(data) {
       tempEl.textContent = data.temperature + " °C";
       humEl.textContent = data.humidity + " %";
-      gasEl.textContent = data.gas;
+      gasEl.textContent = data.gas + "ppm";
       distEl.textContent = data.distance + " cm";
 
       if (data.alert === "YES") {
